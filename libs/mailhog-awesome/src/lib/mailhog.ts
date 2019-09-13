@@ -1,4 +1,4 @@
-import { MailhogNodeClient, MailhogNodeOptions, Email } from './mailhog.types';
+import { MailhogNodeClient, MailhogNodeOptions, Email, ReleaseSmtpConfig } from './mailhog.types';
 import * as mailhog from 'mailhog';
 import * as delay from 'delay';
 import { IncomingMessage } from 'http';
@@ -165,5 +165,44 @@ export class MailhogClient {
       ...options,
       from: email,
     });
+  }
+
+  /**
+   * Return the most recent email given the provided find options
+   * @param options email find options
+   */
+  async getLastEmail(options: FindEmailOptions = {}): Promise<Email | undefined> {
+    const emails = await this.getAllEmails(options);
+    return emails[0];
+  }
+
+  /**
+   * Encodes a String in the given charset to base64 or quoted-printable encoding.
+   * @param str String to encode
+   * @param encoding base64/quoted-printable
+   * @param charset Charset of the input string (default: 'utf8')
+   * @param lineLength Soft line break limit (default: 76)
+   */
+  encode(str: string, encoding: string, charset?: string, lineLength?: number): string {
+    return this.mailhog.encode(str, encoding, charset, lineLength);
+  }
+
+  /**
+   * Decodes a String from the given encoding and outputs it in the given charset.
+   * @param str String to decode
+   * @param encoding base64/quoted-printable
+   * @param charset Charset to use for the output (default: 'utf8')
+   */
+  decode(str: string, encoding: string, charset?: string): string {
+    return this.mailhog.decode(str, encoding, charset);
+  }
+
+  /**
+   * Releases the mail with the given ID using the provided SMTP config.
+   * @param id message ID
+   * @param config SMTP configuration
+   */
+  releaseMessage(id: string, config: ReleaseSmtpConfig): Promise<IncomingMessage> {
+    return this.mailhog.releaseMessage(id, config);
   }
 }

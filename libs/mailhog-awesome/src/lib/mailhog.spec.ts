@@ -1,5 +1,6 @@
 import { createTransport, Transporter, SendMailOptions } from 'nodemailer';
 import { MailhogClient } from './mailhog';
+import * as delay from 'delay';
 
 describe('Mailhog Client end-to-end tests', () => {
   const host = 'mailhog';
@@ -124,8 +125,6 @@ describe('Mailhog Client end-to-end tests', () => {
     const recipient = 'delay-1-rcp@localhost.noexist';
     const sender = 'delay-1-sender@localhost.noexist';
 
-    await mailhog.clearInbox(recipient);
-
     // Send a delayed email
     setTimeout(() => {
       smtpTransport.sendMail({
@@ -171,5 +170,33 @@ describe('Mailhog Client end-to-end tests', () => {
 
     const emails = await mailhog.getInbox(recipient, { body: 'SEARCH-STR' });
     expect(emails.length).toBe(3);
+  });
+
+  it('[LAST-1] Get the last email', async () => {
+    const recipient = 'last-1-rcp@localhost.noexist';
+    const sender = 'last-1-sender@localhost.noexist';
+
+    const email1: SendMailOptions = {
+      subject: 'LAST-1 Email 1',
+      to: recipient,
+      from: sender,
+      html: 'does not matter',
+    };
+    await smtpTransport.sendMail(email1);
+
+    await delay(250);
+
+    const email2: SendMailOptions = {
+      subject: 'LAST-1 Email 2',
+      to: recipient,
+      from: sender,
+      html: 'does not matter',
+    };
+    await smtpTransport.sendMail(email2);
+
+    // Get email
+    const email = await mailhog.getLastEmail({ to: recipient });
+    expect(email).toBeTruthy();
+    expect(email.subject).toBe('LAST-1 Email 2');
   });
 });
