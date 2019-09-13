@@ -1,0 +1,19 @@
+FROM node:12-stretch
+
+# Make sure we are root
+USER root
+
+# Set repository mount point to /repo
+ENV REPOSITORY_PATH=/repo
+WORKDIR /repo
+
+# Set node environment to "development"
+ENV NODE_ENV=development
+
+# npm completion
+RUN npm completion >> ~/.bashrc
+
+# Extend PATH environment variable
+RUN echo "export PATH=$PATH:${REPOSITORY_PATH}/node_modules/.bin" >> ~/.bashrc
+
+ENTRYPOINT tail -f /dev/null

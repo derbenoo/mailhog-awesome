@@ -1,0 +1,29 @@
+version: '3.2'
+
+services:
+  # Development container
+  dev:
+    container_name: mailhog-awesome.dev
+    hostname: mailhog-awesome|dev
+
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: mailhog-awesome.dev
+    volumes:
+      # Bind-mount repository
+      - type: bind
+        source: ../../
+        target: /repo
+
+  # Mailhog configuration: https://github.com/mailhog/MailHog/blob/master/docs/CONFIG.md
+  mailhog:
+    container_name: mailhog
+    hostname: mailhog
+    image: mailhog/mailhog:latest
+    environment:
+      - TZ=Europe/Berlin
+    ports:
+      - '127.0.0.1:1025:1025' # SMTP server
+      - '127.0.0.1:8025:8025' # Web-interface
+    entrypoint: MailHog -jim-accept 0.8
