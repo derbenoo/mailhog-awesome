@@ -2,7 +2,8 @@
 
 import { IncomingMessage } from 'http';
 
-export interface IMailhogNodeAttachment {
+/** Mailhog email attachment */
+export interface EmailAttachment {
   /** Filename */
   name: string;
   /** Content-Type */
@@ -13,7 +14,8 @@ export interface IMailhogNodeAttachment {
   Body: string;
 }
 
-export interface IMailhogNodeItem {
+/** Mailhog email */
+export interface Email {
   /** Mail ID */
   ID: string;
   /** Decoded mail text content */
@@ -37,10 +39,10 @@ export interface IMailhogNodeItem {
   /** Mail Delivery-Date header */
   deliveryDate: Date;
   /** List of mail attachments */
-  attachments: IMailhogNodeAttachment[];
+  attachments: EmailAttachment[];
 }
 
-export interface IMailhogNodeMessagesRsp {
+export interface GetEmailsRsp {
   /** Number of results available */
   total: number;
   /** Number of results returned */
@@ -48,10 +50,10 @@ export interface IMailhogNodeMessagesRsp {
   /** Offset for the range of results returned */
   start: number;
   /** List of mail object items */
-  items: IMailhogNodeItem[];
+  items: Email[];
 }
 
-export interface IMailhogNodeOptions {
+export interface MailhogNodeOptions {
   /** API protocol */
   protocol?: string;
   /** API host */
@@ -64,7 +66,7 @@ export interface IMailhogNodeOptions {
   basePath?: string;
 }
 
-export interface IReleaseSmtpConfig {
+export interface ReleaseSmtpConfig {
   /** SMTP host */
   host: String;
   /** SMTP port */
@@ -79,16 +81,16 @@ export interface IReleaseSmtpConfig {
   mechanism?: 'PLAIN' | 'CRAM-MD5';
 }
 
-export interface IMailhogNodeClient {
+export interface MailhogNodeClient {
   /** Mailhog Node options object*/
-  options: IMailhogNodeOptions;
+  options: MailhogNodeOptions;
 
   /**
    * Retrieves a list of mail objects, sorted from latest to earliest.
    * @param start defines the messages query offset (default: 0)
    * @param limit defines the max number of results (default: 50)
    */
-  messages(start?: number, limit?: number): Promise<IMailhogNodeMessagesRsp>;
+  messages(start?: number, limit?: number): Promise<GetEmailsRsp>;
 
   /**
    * Retrieves a list of mail objects for the given query, sorted from latest to earliest.
@@ -97,46 +99,38 @@ export interface IMailhogNodeClient {
    * @param start defines the search query offset (default: 0)
    * @param limit 	defines the max number of results (default: 50)
    */
-  search(
-    query: string,
-    kind?: 'from' | 'to' | 'containing',
-    start?: number,
-    limit?: number
-  ): Promise<IMailhogNodeMessagesRsp>;
+  search(query: string, kind?: 'from' | 'to' | 'containing', start?: number, limit?: number): Promise<GetEmailsRsp>;
 
   /**
    * Retrieves the latest mail object sent from the given address.
    * @param query from address
    */
-  latestFrom(query: string): Promise<IMailhogNodeMessagesRsp>;
+  latestFrom(query: string): Promise<GetEmailsRsp>;
 
   /**
    * Retrieves the latest mail object sent to the given address.
    * @param query to address
    */
-  latestTo(query: string): Promise<IMailhogNodeMessagesRsp>;
+  latestTo(query: string): Promise<GetEmailsRsp>;
 
   /**
    * Retrieves the latest mail object containing the given query.
    * @param query search query
    */
-  latestContaining(query: string): Promise<IMailhogNodeMessagesRsp>;
+  latestContaining(query: string): Promise<GetEmailsRsp>;
 
   /**
    * Releases the mail with the given ID using the provided SMTP config.
    * @param id message ID
    * @param config SMTP configuration
    */
-  releaseMessage(
-    id: number,
-    config: IReleaseSmtpConfig
-  ): Promise<IncomingMessage>;
+  releaseMessage(id: string, config: ReleaseSmtpConfig): Promise<IncomingMessage>;
 
   /**
    * Deletes the mail with the given ID from MailHog.
    * @param id message ID
    */
-  deleteMessage(id: number): Promise<IncomingMessage>;
+  deleteMessage(id: string): Promise<IncomingMessage>;
 
   /**
    * Deletes all mails stored in MailHog.
@@ -150,12 +144,7 @@ export interface IMailhogNodeClient {
    * @param charset Charset of the input string (default: 'utf8')
    * @param lineLength Soft line break limit (default: 76)
    */
-  encode(
-    str: string,
-    encoding: string,
-    charset?: string,
-    lineLength?: number
-  ): string;
+  encode(str: string, encoding: string, charset?: string, lineLength?: number): string;
 
   /**
    * Decodes a String from the given encoding and outputs it in the given charset.

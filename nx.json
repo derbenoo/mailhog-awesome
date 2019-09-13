@@ -9,7 +9,7 @@
   },
   "projects": {
     "mailhog-awesome": {
-      "tags": []
+      "tags": ["platform:node"]
     }
   }
 }

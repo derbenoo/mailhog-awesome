@@ -1,1 +1,1 @@
-export * from './lib/mailhog-awesome';
+export * from './lib/mailhog';
