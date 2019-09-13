@@ -9,7 +9,12 @@ NodeJS mailhog client library for email end-to-end testing, written in TypeScrip
 Based on the [mailhog](https://www.npmjs.com/package/mailhog) package. 
 
 
-
 - Inbox system for isolated testing (needed to run tests in parallel)
 - Built-in retry logic for email retrieval
 - Full TypeScript typings
+
+
+# Known Issues
+
+- BCC is not working
+- Not optimized for performance on large sets of emails
