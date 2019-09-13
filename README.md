@@ -1,7 +1,7 @@
-![mailhog-awaesome](./docs/mailhog-awesome.png)
+<img src="https://github.com/derbenoo/mailhog-awesome/raw/master/docs/mailhog-awesome.png?sanitize=true" alt="mailhog-awesome" />
 
 <p align="center">
-NodeJS mailhog client for end-to-end email testing written in TypeScript.
+NodeJS mailhog client library for email end-to-end testing, written in TypeScript.
 </p>
 
 

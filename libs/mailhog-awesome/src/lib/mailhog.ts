@@ -14,8 +14,6 @@ export interface FindEmailOptions {
   to?: string;
   /** Only return emails with this exact "cc" field */
   cc?: string;
-  /** Only return emails with this exact "bcc" field */
-  bcc?: string;
   /** Only return emails where the subject contains the given string */
   subject?: string;
   /** Only return emails where the body contains the given string */
@@ -61,7 +59,6 @@ export class MailhogClient {
     const from = options.from || this.defaults.from;
     const to = options.to || this.defaults.to;
     const cc = options.cc || this.defaults.cc;
-    const bcc = options.bcc || this.defaults.bcc;
 
     const before = options.before || this.defaults.before;
     const after = options.after || this.defaults.after;
@@ -95,9 +92,6 @@ export class MailhogClient {
           return false;
         }
         if (cc && email.cc !== cc) {
-          return false;
-        }
-        if (bcc && email.bcc !== bcc) {
           return false;
         }
         if (before && email.date.getTime() >= before.getTime()) {
