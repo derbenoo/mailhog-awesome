@@ -27,13 +27,21 @@
   "private": true,
   "dependencies": {},
   "devDependencies": {
+    "@nrwl/jest": "^8.5.0",
     "@nrwl/workspace": "8.5.0",
     "@types/node": "~8.9.4",
     "dotenv": "6.2.0",
+    "eslint": "6.1.0",
+    "prettier": "1.16.4",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
-    "eslint": "6.1.0",
     "typescript": "~3.4.5",
-    "prettier": "1.16.4"
+    "@nrwl/eslint-plugin-nx": "8.5.0",
+    "@typescript-eslint/parser": "2.0.0-alpha.4",
+    "@typescript-eslint/eslint-plugin": "2.0.0-alpha.4",
+    "eslint-config-prettier": "6.0.0",
+    "jest": "24.1.0",
+    "@types/jest": "24.0.9",
+    "ts-jest": "24.0.0"
   }
 }

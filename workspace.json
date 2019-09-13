@@ -1,6 +1,34 @@
 {
   "version": 1,
-  "projects": {},
+  "projects": {
+    "mailhog-awesome": {
+      "root": "libs/mailhog-awesome",
+      "sourceRoot": "libs/mailhog-awesome/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/mailhog-awesome/.eslintrc",
+            "tsConfig": [
+              "libs/mailhog-awesome/tsconfig.lib.json",
+              "libs/mailhog-awesome/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/mailhog-awesome/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/mailhog-awesome/jest.config.js",
+            "tsConfig": "libs/mailhog-awesome/tsconfig.spec.json"
+          }
+        }
+      }
+    }
+  },
   "cli": {
     "defaultCollection": "@nrwl/workspace"
   },
