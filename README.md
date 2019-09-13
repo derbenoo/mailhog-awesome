@@ -1,22 +1,12 @@
+![mailhog-awaesome](./docs/mailhog-awesome.png)
+
 <p align="center">
-<table>
-  <tr>
-    <td>
-      <a href="https://www.npmjs.com/package/ts-configurable">
-        <img src="./docs/mailhog-awesome.png" alt="mailhog-awesome" width="150" />
-      </a>
-    </td>
-    <td>
-      <h1>
-        mailhog-awesome
-      </h1>
-    </td>
-  </tr>
-</table>
+NodeJS mailhog client for end-to-end email testing written in TypeScript.
 </p>
 
->Robust and feature-richt mailhog client written in TypeScript.>
-Based on the [mailhog](https://www.npmjs.com/package/mailhog) package.
+
+# Description 
+Based on the [mailhog](https://www.npmjs.com/package/mailhog) package. 
 
 
 

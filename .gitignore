@@ -1,39 +1,169 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+# One global .gitignore file for the entire repository. The following sections exist:
+#   * Generated Output
+#   * Misc / Custom
+#   * Node & NPM
+#   * Editors
+#   * Operating Systems
+#   * Large Files
 
-# compiled output
-/dist
-/tmp
-/out-tsc
+########################
+### Generated Output ###
+########################
 
-# dependencies
-/node_modules
+### Compilation ###
+dist/
+coverage/
+test-results/
+out-tsc/
+typings/
+.sass-cache/
+docs/apps/
+docs/libs/
+docs/database/generated/
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+### Temporary Files ###
+*.tmp
+*.tmp.*
+.tmp/
+tmp/
+temp/
+.jscpd
 
-# IDE - VSCode
+### Logging ###
+logs
+*.log
+log.txt
+npm-debug.log*
+
+#####################
+### Misc / Custom ###
+#####################
+
+### Chrome ###
+/connect.lock
+/libpeerconnection.log
+
+### dotenv environment variables file ###
+**/.env
+
+### dev container cache ###
+.cache/
+
+##################
+### Node & NPM ###
+##################
+
+node_modules/
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+.npm/
+pids
+*.pid
+*.seed
+*.pid.lock
+
+###############
+### Editors ###
+###############
+
+### VSCode ###
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+!.vscode/snippets
+.history
 
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
-/typings
+### Vim ###
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+Session.vim
+.netrwhist
+tags
+[._]*.un~
 
-# System Files
+#########################
+### Operating Systems ###
+#########################
+
+### Linux ###
+*~
+.fuse_hidden*
+.nfs*
+
+### macOS ###
 .DS_Store
 Thumbs.db
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+###################
+### Large Files ###
+###################
+
+### Audio ###
+*.aif
+*.iff
+*.m3u
+*.m4a
+*.mid
+*.mp3
+*.mpa
+*.ra
+*.wav
+*.wma
+
+### Video ###
+*.3g2
+*.3gp
+*.asf
+*.asx
+*.avi
+*.flv
+*.mov
+*.mp4
+*.mpg
+*.rm
+*.swf
+*.vob
+*.wmv
+*.ogv
+
+### Compressed ###
+*.7z
+*.deb
+*.gz
+*.pkg
+*.rar
+*.rpm
+*.sit
+*.sitx
+*.tar
+*.zip
+*.zipx
+*.tgz
+
+### Adobe ###
+*.psd
+*.ai
+*.indd
+*.prproj
+*.aep
+*.xcf
