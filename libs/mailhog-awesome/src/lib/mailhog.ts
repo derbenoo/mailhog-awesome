@@ -53,6 +53,10 @@ export class MailhogClient {
     this.mailhog = mailhog(options);
   }
 
+  /**
+   * Get all emails given a set of find options
+   * @param options email find options
+   */
   async getAllEmails(options: FindEmailOptions = {}): Promise<Email[]> {
     const from = options.from || this.defaults.from;
     const to = options.to || this.defaults.to;
@@ -119,6 +123,11 @@ export class MailhogClient {
     return [];
   }
 
+  /**
+   * Get all emails for an inbox of an email address
+   * @param email email address
+   * @param options email find options
+   */
   async getInbox(email: string, options: Without<FindEmailOptions, 'to'> = {}): Promise<Email[]> {
     return this.getAllEmails({
       ...options,
@@ -126,6 +135,10 @@ export class MailhogClient {
     });
   }
 
+  /**
+   * Clear the inbox of an email address
+   * @param email email address
+   */
   async clearInbox(email: string): Promise<true | MailhogError[]> {
     const messages = await this.getInbox(email);
     const responses = await Promise.all(messages.map(message => this.mailhog.deleteMessage(message.ID)));
@@ -140,15 +153,23 @@ export class MailhogClient {
       : true;
   }
 
+  /**
+   * Clear all emails
+   */
   async clearAllEmails(): Promise<true | MailhogError> {
     const rsp = await this.mailhog.deleteAll();
     return rsp.statusCode === HTTP_SUCCESS ? true : { rsp, reason: 'Could not clear all messages!' };
   }
 
-  async getEmailsForSender(senderEmail: string, options: Without<FindEmailOptions, 'from'> = {}): Promise<Email[]> {
+  /**
+   * Get all emails for a sender's email address
+   * @param email sender's email address
+   * @param options email find options
+   */
+  async getEmailsForSender(email: string, options: Without<FindEmailOptions, 'from'> = {}): Promise<Email[]> {
     return this.getAllEmails({
       ...options,
-      from: senderEmail,
+      from: email,
     });
   }
 }
