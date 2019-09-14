@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.1.2 
+
+- Add TypeScript definitions to published package
+
 ## 0.1.1
 
 - Add package description
