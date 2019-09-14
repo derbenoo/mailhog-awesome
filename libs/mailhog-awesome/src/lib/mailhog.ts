@@ -3,8 +3,6 @@ import * as mailhog from 'mailhog';
 import * as delay from 'delay';
 import { IncomingMessage } from 'http';
 
-type Without<T, K> = Partial<{ [L in Exclude<keyof T, K>]: T[L] }>;
-
 const HTTP_SUCCESS = 200;
 
 export interface FindEmailOptions {
@@ -22,18 +20,16 @@ export interface FindEmailOptions {
   before?: Date;
   /** Only return emails which where received after the given date */
   after?: Date;
-  /** Skip the given number of emails */
-  offset?: number;
-  /** Return at maximum the given number of emails */
-  limit?: number;
-  /** Number of retries when fetching emails before giving up */
+  /** Number of retries when fetching emails before giving up (default: 1)*/
   numRetries?: number;
-  /** Delay between email fetching retries */
+  /** Delay between email fetching retries (default: 500ms)*/
   retryDelayMs?: number;
 }
 
+type DefaultOptions = Pick<FindEmailOptions, 'numRetries' | 'retryDelayMs'>;
+
 export interface MailhogOptions extends MailhogNodeOptions {
-  defaults?: FindEmailOptions;
+  defaults?: DefaultOptions;
 }
 
 export interface MailhogError {
@@ -42,8 +38,8 @@ export interface MailhogError {
 }
 
 export class MailhogClient {
-  private readonly globalLimit = 5000;
-  private readonly defaults: FindEmailOptions;
+  private readonly limit = 5000;
+  private readonly defaults: DefaultOptions;
   private readonly mailhog: MailhogNodeClient;
 
   constructor(options: MailhogOptions) {
@@ -55,31 +51,19 @@ export class MailhogClient {
    * Get all emails given a set of find options
    * @param options email find options
    */
-  async getAllEmails(options: FindEmailOptions = {}): Promise<Email[]> {
-    const from = options.from || this.defaults.from;
-    const to = options.to || this.defaults.to;
-    const cc = options.cc || this.defaults.cc;
-
-    const before = options.before || this.defaults.before;
-    const after = options.after || this.defaults.after;
-
-    const subject = options.subject || this.defaults.subject;
-    const body = options.body || this.defaults.body;
-
-    const start = options.offset || this.defaults.offset || 0;
-    const limit = options.limit || this.defaults.limit || 50;
-
-    const numRetries = options.numRetries || this.defaults.numRetries || 0;
+  async getEmails(options: FindEmailOptions): Promise<Email[]> {
+    const { after, before, body, cc, from, subject, to } = options;
+    const numRetries = options.numRetries || this.defaults.numRetries || 1;
     const retryDelayMs = options.retryDelayMs || this.defaults.retryDelayMs || 500;
 
-    for (let i = 0; i < numRetries; i++) {
+    for (let i = 0; i <= numRetries; i++) {
       let emails: Email[] = [];
 
       if (body) {
-        const { items } = await this.mailhog.search(body, 'containing', 0, this.globalLimit);
+        const { items } = await this.mailhog.search(body, 'containing', 0, this.limit);
         emails = items;
       } else {
-        const { items } = await this.mailhog.messages(0, this.globalLimit);
+        const { items } = await this.mailhog.messages(0, this.limit);
         emails = items;
       }
 
@@ -107,7 +91,7 @@ export class MailhogClient {
       });
 
       if (emails.length > 0) {
-        return emails.slice(start, start + limit);
+        return emails;
       }
 
       await delay(retryDelayMs);
@@ -118,15 +102,101 @@ export class MailhogClient {
   }
 
   /**
-   * Get all emails for an inbox of an email address
-   * @param email email address
+   * Get all emails.
+   */
+  async getAllEmails(): Promise<Email[]> {
+    return this.getEmails({});
+  }
+
+  /**
+   * Get the most recent email given the provided find options.
+   * @param options Email find options
+   */
+  async getLastEmail(options: FindEmailOptions = {}): Promise<Email | undefined> {
+    const emails = await this.getEmails(options);
+    return emails[0];
+  }
+
+  /**
+   * Delete the email with the given ID.
+   * @param id ID of the email
+   */
+  async deleteEmail(id: string): Promise<true | MailhogError> {
+    const rsp = await this.mailhog.deleteMessage(id);
+    if (rsp.statusCode !== HTTP_SUCCESS) {
+      return { rsp, reason: `Could not delete email with ID ${id}!` };
+    }
+    return true;
+  }
+
+  /**
+   * Delete all emails matching the given find options
    * @param options email find options
    */
-  async getInbox(email: string, options: Without<FindEmailOptions, 'to'> = {}): Promise<Email[]> {
-    return this.getAllEmails({
-      ...options,
-      to: email,
-    });
+  async deleteEmails(options: FindEmailOptions): Promise<true | MailhogError[]> {
+    const emails = await this.getEmails(options);
+    const results = await Promise.all(emails.map(async email => this.deleteEmail(email.ID)));
+
+    const errors = results.filter(result => result !== true) as MailhogError[];
+    if (errors.length > 0) {
+      return errors;
+    }
+
+    return true;
+  }
+
+  /**
+   * Delete all emails.
+   */
+  async deleteAllEmails(): Promise<true | MailhogError[]> {
+    return this.deleteEmails({});
+  }
+
+  /**
+   * Releases the mail with the given ID using the provided SMTP config.
+   * @param id message ID
+   * @param config SMTP configuration
+   */
+  async releaseEmail(id: string, config: ReleaseSmtpConfig): Promise<true | MailhogError> {
+    const rsp = await this.mailhog.releaseMessage(id, config);
+
+    if (rsp.statusCode !== HTTP_SUCCESS) {
+      return { rsp, reason: `Could not release email with ID ${id}!` };
+    }
+    return true;
+  }
+
+  /**
+   * Release all emails that match the given find options using the provided SMTP config.
+   * @param config SMTP configuration
+   * @param options Email find options
+   */
+  async releaseEmails(config: ReleaseSmtpConfig, options: FindEmailOptions): Promise<true | MailhogError[]> {
+    const emails = await this.getEmails(options);
+    const results = await Promise.all(emails.map(email => this.releaseEmail(email.ID, config)));
+
+    const errors = results.filter(result => result !== true) as MailhogError[];
+    if (errors.length > 0) {
+      return errors;
+    }
+
+    return true;
+  }
+
+  /**
+   * Release all emails using the provided SMTP config.
+   * @param config SMTP configuration
+   */
+  async releaseAllEmails(config: ReleaseSmtpConfig): Promise<true | MailhogError[]> {
+    return this.releaseEmails(config, {});
+  }
+
+  /**
+   * Get all emails for an inbox of an email address
+   * @param email email address
+   */
+  async getInbox(email: string): Promise<Email[]> {
+    return this.getEmails({ to: email });
   }
 
   /**
@@ -134,46 +204,7 @@ export class MailhogClient {
    * @param email email address
    */
   async clearInbox(email: string): Promise<true | MailhogError[]> {
-    const messages = await this.getInbox(email);
-    const responses = await Promise.all(messages.map(message => this.mailhog.deleteMessage(message.ID)));
-
-    // Check for deletion errors
-    const errors = messages
-      .map((message, index) => ({ msg: message, rsp: responses[index] }))
-      .filter(result => result.rsp.statusCode !== HTTP_SUCCESS);
-
-    return errors.length > 0
-      ? errors.map(error => ({ rsp: error.rsp, reason: `Could not delete message with ID ${error.msg.ID}!` }))
-      : true;
-  }
-
-  /**
-   * Clear all emails
-   */
-  async clearAllEmails(): Promise<true | MailhogError> {
-    const rsp = await this.mailhog.deleteAll();
-    return rsp.statusCode === HTTP_SUCCESS ? true : { rsp, reason: 'Could not clear all messages!' };
-  }
-
-  /**
-   * Get all emails for a sender's email address
-   * @param email sender's email address
-   * @param options email find options
-   */
-  async getEmailsForSender(email: string, options: Without<FindEmailOptions, 'from'> = {}): Promise<Email[]> {
-    return this.getAllEmails({
-      ...options,
-      from: email,
-    });
-  }
-
-  /**
-   * Return the most recent email given the provided find options
-   * @param options email find options
-   */
-  async getLastEmail(options: FindEmailOptions = {}): Promise<Email | undefined> {
-    const emails = await this.getAllEmails(options);
-    return emails[0];
+    return this.deleteEmails({ to: email });
   }
 
   /**
@@ -195,14 +226,5 @@ export class MailhogClient {
    */
   decode(str: string, encoding: string, charset?: string): string {
     return this.mailhog.decode(str, encoding, charset);
-  }
-
-  /**
-   * Releases the mail with the given ID using the provided SMTP config.
-   * @param id message ID
-   * @param config SMTP configuration
-   */
-  releaseMessage(id: string, config: ReleaseSmtpConfig): Promise<IncomingMessage> {
-    return this.mailhog.releaseMessage(id, config);
   }
 }
