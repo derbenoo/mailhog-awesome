@@ -2,7 +2,7 @@ import { createTransport, Transporter, SendMailOptions } from 'nodemailer';
 import { MailhogClient } from './mailhog';
 import * as delay from 'delay';
 
-describe('Mailhog Client end-to-end tests', () => {
+describe('Mailhog client end-to-end tests', () => {
   const host = 'mailhog';
   const smtpPort = 1025;
   const webPort = 8025;
@@ -22,12 +22,12 @@ describe('Mailhog Client end-to-end tests', () => {
     });
 
     // Clear before starting
-    await mailhog.clearAllEmails();
+    await mailhog.deleteAllEmails();
   });
 
   afterAll(async () => {
     // Clear before finishing
-    await mailhog.clearAllEmails();
+    await mailhog.deleteAllEmails();
   });
 
   it('[SENDER-1] Retrieve emails for a sender address', async () => {
@@ -43,7 +43,7 @@ describe('Mailhog Client end-to-end tests', () => {
 
     await smtpTransport.sendMail(email);
 
-    const emails = await mailhog.getEmailsForSender(sender);
+    const emails = await mailhog.getEmails({ from: sender });
     expect(emails.length).toBe(1);
     expect(emails[0]).toMatchObject(email);
   });
@@ -104,20 +104,20 @@ describe('Mailhog Client end-to-end tests', () => {
     await Promise.all(emailOptions.map(email => smtpTransport.sendMail(email)));
 
     // Check CC filter
-    const ccEmails = await mailhog.getInbox(recipient, { cc: 'inbox-2-cc-1@localhost.noexist' });
+    const ccEmails = await mailhog.getEmails({ to: recipient, cc: 'inbox-2-cc-1@localhost.noexist' });
     expect(ccEmails.length).toBe(2);
     expect(ccEmails.map(email => email.subject).sort()).toEqual(['INBOX-2 Email 2', 'INBOX-2 Email 3']);
 
     // Check before filter
-    const beforeEmails1 = await mailhog.getInbox(recipient, { before: new Date(Date.now() + 20000) });
+    const beforeEmails1 = await mailhog.getEmails({ to: recipient, before: new Date(Date.now() + 20000) });
     expect(beforeEmails1.length).toBe(4);
-    const beforeEmails2 = await mailhog.getInbox(recipient, { before: new Date(Date.now() - 20000) });
+    const beforeEmails2 = await mailhog.getEmails({ to: recipient, before: new Date(Date.now() - 20000) });
     expect(beforeEmails2.length).toBe(0);
 
     // Check after filter
-    const afterEmails1 = await mailhog.getInbox(recipient, { after: new Date(Date.now() - 20000) });
+    const afterEmails1 = await mailhog.getEmails({ to: recipient, after: new Date(Date.now() - 20000) });
     expect(afterEmails1.length).toBe(4);
-    const afterEmails2 = await mailhog.getInbox(recipient, { after: new Date(Date.now() + 20000) });
+    const afterEmails2 = await mailhog.getEmails({ to: recipient, after: new Date(Date.now() + 20000) });
     expect(afterEmails2.length).toBe(0);
   });
 
@@ -136,7 +136,7 @@ describe('Mailhog Client end-to-end tests', () => {
     }, 500);
 
     // Get email
-    const emails = await mailhog.getInbox(recipient, { retryDelayMs: 500, numRetries: 5 });
+    const emails = await mailhog.getEmails({ to: recipient, retryDelayMs: 500, numRetries: 5 });
     expect(emails.length).toBe(1);
   });
 
@@ -168,7 +168,7 @@ describe('Mailhog Client end-to-end tests', () => {
       )
     );
 
-    const emails = await mailhog.getInbox(recipient, { body: 'SEARCH-STR' });
+    const emails = await mailhog.getEmails({ to: recipient, body: 'SEARCH-STR' });
     expect(emails.length).toBe(3);
   });
 
