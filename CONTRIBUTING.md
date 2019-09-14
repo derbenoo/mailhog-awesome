@@ -17,9 +17,14 @@ The recommended IDE for developing is [Visual Studio Code (VSCode)](https://code
 A development environment can be created using [docker](https://www.docker.com/get-started) and [docker-compose](https://docs.docker.com/compose/install/):
 
 ```
-$ cd tools/
-$ docker-compose up --build -d
-$ docker exec -it node-dev bash
+$ ./start-development.sh
+```
+
+The following container will be started:
+
+```sh
+mailhog-awesome.dev # Development container with NodeJS installed
+mailhog # Mailhog container 
 ```
 
 All dependencies have to be initially installed using npm:

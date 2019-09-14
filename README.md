@@ -6,6 +6,8 @@ NodeJS mailhog client library for email end-to-end testing, written in TypeScrip
 
 
 # Description 
+
+
 Based on the [mailhog](https://www.npmjs.com/package/mailhog) package. 
 
 
@@ -18,3 +20,11 @@ Based on the [mailhog](https://www.npmjs.com/package/mailhog) package.
 
 - BCC is not working
 - Not optimized for performance on large sets of emails
+
+# Contributing
+
+Contributions are welcome, read [here](./CONTRIBUTING.md) how to get started.
+
+# License
+
+Mailhog-awesome is MIT licensed.
