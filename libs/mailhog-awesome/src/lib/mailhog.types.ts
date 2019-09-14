@@ -68,15 +68,15 @@ export interface MailhogNodeOptions {
 
 export interface ReleaseSmtpConfig {
   /** SMTP host */
-  host: String;
+  host: string;
   /** SMTP port */
-  port: String;
+  port: string;
   /** recipient email */
-  email: String;
+  email: string;
   /** SMTP username */
-  username?: String;
+  username?: string;
   /** SMTP password */
-  password?: String;
+  password?: string;
   /** SMTP auth type (PLAIN or CRAM-MD5) */
   mechanism?: 'PLAIN' | 'CRAM-MD5';
 }
@@ -138,8 +138,8 @@ export interface MailhogNodeClient {
   deleteAll(): Promise<IncomingMessage>;
 
   /**
-   * Encodes a String in the given charset to base64 or quoted-printable encoding.
-   * @param str String to encode
+   * Encodes a string in the given charset to base64 or quoted-printable encoding.
+   * @param str string to encode
    * @param encoding base64/quoted-printable
    * @param charset Charset of the input string (default: 'utf8')
    * @param lineLength Soft line break limit (default: 76)
@@ -147,8 +147,8 @@ export interface MailhogNodeClient {
   encode(str: string, encoding: string, charset?: string, lineLength?: number): string;
 
   /**
-   * Decodes a String from the given encoding and outputs it in the given charset.
-   * @param str String to decode
+   * Decodes a string from the given encoding and outputs it in the given charset.
+   * @param str string to decode
    * @param encoding base64/quoted-printable
    * @param charset Charset to use for the output (default: 'utf8')
    */
