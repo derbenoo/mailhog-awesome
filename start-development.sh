@@ -9,5 +9,8 @@ docker-compose -p mailhog-awesome -f $SCRIPTPATH/tools/docker/docker-compose.yml
 # Attach to dev container if a TTY is present
 if tty -s
 then
-  docker exec -it mailhog-awesome.dev bash
+  if [ -z "${CI}" ]
+  then
+    docker exec -it mailhog-awesome.dev bash
+  fi
 fi
