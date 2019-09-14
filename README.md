@@ -4,6 +4,7 @@
 NodeJS mailhog client library for email end-to-end testing, written in TypeScript.
 </p>
 
+[![CircleCI](https://circleci.com/gh/derbenoo/mailhog-awesome.svg?style=svg)](https://circleci.com/gh/derbenoo/mailhog-awesome)
 
 # Description 
 

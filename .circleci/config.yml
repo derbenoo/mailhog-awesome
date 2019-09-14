@@ -16,7 +16,7 @@ jobs:
           command: ./start-development.sh
       - run:
           name: Check formatting & linting
-          command: npm run format:check && npm run lint
+          command: ./tools/ci/exec.sh "npm run format:check && npm run lint"
       - run:
           name: Execute tests
-          command: docker exec mailhog-awesome.dev "npm run test"
+          command: ./tools/ci/exec.sh "npm run test"
