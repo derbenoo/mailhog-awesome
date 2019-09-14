@@ -10,7 +10,13 @@
     "lint": "nx workspace-lint && nx lint",
     "format": "nx format:write",
     "format:write": "nx format:write",
-    "format:check": "nx format:check"
+    "format:check": "nx format:check",
+    "pack:lib": "rm -r dist/libs/mailhog-awesome || true && tsc --build libs/mailhog-awesome/tsconfig.lib.json&& npm run copy-files",
+    "copy-files": "run-s copy-readme copy-license copy-changelog copy-package-json",
+    "copy-readme": "cp README.md dist/libs/mailhog-awesome/src",
+    "copy-license": "cp LICENSE dist/libs/mailhog-awesome/src",
+    "copy-changelog": "cp CHANGELOG.md dist/libs/mailhog-awesome/src",
+    "copy-package-json": "cp libs/mailhog-awesome/package.json dist/libs/mailhog-awesome/src"
   },
   "private": true,
   "dependencies": {
@@ -23,7 +29,7 @@
     "@nrwl/linter": "^8.5.0",
     "@nrwl/workspace": "8.5.0",
     "@types/jest": "24.0.9",
-    "@types/node": "~8.9.4",
+    "@types/node": "^8.9.5",
     "@types/nodemailer": "^6.2.1",
     "@typescript-eslint/eslint-plugin": "2.0.0-alpha.4",
     "@typescript-eslint/parser": "2.0.0-alpha.4",

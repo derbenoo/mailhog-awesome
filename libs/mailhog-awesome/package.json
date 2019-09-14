@@ -1,0 +1,30 @@
+{
+  "version": "0.1.0",
+  "name": "mailhog-awesome",
+  "description": "",
+  "keywords": [
+    "mailhog",
+    "email-testing",
+    "nodejs",
+    "node",
+    "email",
+    "mailhog-api",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:derbenoo/mailhog-awesome.git"
+  },
+  "bugs": {
+    "url": "https://github.com/derbenoo/mailhog-awesome/issues"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/derbenoo/mailhog-awesome",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "author": "Benjamin A. (derbenoo)",
+  "dependencies": {
+    "delay": "^4.3.0",
+    "mailhog": "^4.7.0"
+  }
+}
