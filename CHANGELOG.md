@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.1.3
+
+- Fix TypeScript compilation process
+
 ## 0.1.2 
 
 - Add TypeScript definitions to published package

@@ -11,7 +11,7 @@
     "format": "nx format:write",
     "format:write": "nx format:write",
     "format:check": "nx format:check",
-    "pack:lib": "rm -r dist/libs/mailhog-awesome || true && tsc --build libs/mailhog-awesome/tsconfig.lib.json&& npm run copy-files",
+    "pack:lib": "rm -r dist/libs/mailhog-awesome || true && tsc --build libs/mailhog-awesome/tsconfig.lib.json && npm run copy-files",
     "copy-files": "run-s copy-readme copy-license copy-changelog copy-package-json",
     "copy-readme": "cp README.md dist/libs/mailhog-awesome/src",
     "copy-license": "cp LICENSE dist/libs/mailhog-awesome/src",
