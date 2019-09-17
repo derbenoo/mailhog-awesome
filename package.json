@@ -7,6 +7,8 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
+    "gen-doc": "typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs --hideGenerator --hideSources --theme markdown --out docs/mailhog-awesome",
+    "rm-doc": "rm -r docs/mailhog-awesome",
     "lint": "nx workspace-lint && nx lint",
     "format": "nx format:write",
     "format:write": "nx format:write",

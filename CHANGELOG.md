@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.1.4
+
+- Export TypeScript types
+- Add the `extractUrls` function
+- Add default decoding options
+
 ## 0.1.3
 
 - Fix TypeScript compilation process

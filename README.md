@@ -276,6 +276,20 @@ Name | Type | Description |
 
 **Returns:** *string*
 
+---
+
+▸ **extractUrls**(`str`: string): *string[]*
+
+Extract all URLs from a string
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`str` | string | string to extract all URLs from  |
+
+**Returns:** *string[]*
+
 
 ## :rotating_light: Known Issues
 

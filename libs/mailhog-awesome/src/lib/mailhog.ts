@@ -5,6 +5,11 @@ import { IncomingMessage } from 'http';
 
 const HTTP_SUCCESS = 200;
 
+interface DecodingOptions {
+  encoding: 'base64' | 'quoted-printable';
+  charset?: string;
+}
+
 export interface FindEmailOptions {
   /** Only return emails with this exact "from" field */
   from?: string;
@@ -24,9 +29,11 @@ export interface FindEmailOptions {
   numRetries?: number;
   /** Delay between email fetching retries (default: 500ms)*/
   retryDelayMs?: number;
+  /** Decoding options for email subject, text and html properties */
+  decode?: DecodingOptions;
 }
 
-type DefaultOptions = Pick<FindEmailOptions, 'numRetries' | 'retryDelayMs'>;
+type DefaultOptions = Pick<FindEmailOptions, 'numRetries' | 'retryDelayMs' | 'decode'>;
 
 export interface MailhogOptions extends MailhogNodeOptions {
   defaults?: DefaultOptions;
@@ -55,6 +62,7 @@ export class MailhogClient {
     const { after, before, body, cc, from, subject, to } = options;
     const numRetries = options.numRetries || this.defaults.numRetries || 1;
     const retryDelayMs = options.retryDelayMs || this.defaults.retryDelayMs || 500;
+    const decode = options.decode || this.defaults.decode;
 
     for (let i = 0; i <= numRetries; i++) {
       let emails: Email[] = [];
@@ -91,6 +99,13 @@ export class MailhogClient {
       });
 
       if (emails.length > 0) {
+        if (decode) {
+          emails.forEach(email => {
+            email.subject = this.decode(email.subject, decode.encoding, decode.charset);
+            email.text = this.decode(email.text, decode.encoding, decode.charset);
+            email.html = this.decode(email.html, decode.encoding, decode.charset);
+          });
+        }
         return emails;
       }
 
@@ -214,7 +229,7 @@ export class MailhogClient {
    * @param charset Charset of the input string (default: 'utf8')
    * @param lineLength Soft line break limit (default: 76)
    */
-  encode(str: string, encoding: string, charset?: string, lineLength?: number): string {
+  encode(str: string, encoding: 'base64' | 'quoted-printable', charset?: string, lineLength?: number): string {
     return this.mailhog.encode(str, encoding, charset, lineLength);
   }
 
@@ -224,7 +239,17 @@ export class MailhogClient {
    * @param encoding base64/quoted-printable
    * @param charset Charset to use for the output (default: 'utf8')
    */
-  decode(str: string, encoding: string, charset?: string): string {
+  decode(str: string, encoding: 'base64' | 'quoted-printable', charset?: string): string {
     return this.mailhog.decode(str, encoding, charset);
+  }
+
+  /**
+   * Extract all URLs from a string
+   * @param str string to extract all URLs from
+   */
+  extractUrls(str: string): string[] {
+    return str.match(
+      /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
+    );
   }
 }

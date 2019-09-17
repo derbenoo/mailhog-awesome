@@ -33,6 +33,10 @@ All dependencies have to be initially installed using npm:
 $ npm install
 ```
 
+## Generating documentation
+
+A documentation of all typescript files can be automatically generated using the `npm run gen-doc` command
+
 ## Publishing to npm
 
 A new version of the `mailhog-awesome` package can be published to npm like this:
