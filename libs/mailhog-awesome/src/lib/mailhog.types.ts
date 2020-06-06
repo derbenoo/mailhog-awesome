@@ -42,7 +42,7 @@ export interface Email {
   attachments: EmailAttachment[];
 }
 
-export interface GetEmailsRsp {
+export interface GetEmailsRsp extends Message {
   /** Number of results available */
   total: number;
   /** Number of results returned */
